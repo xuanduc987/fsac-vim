@@ -18,24 +18,20 @@ function! fsac#start() abort
     endif
 endfunction
 
-function! fsac#out_handler(channel, msg)
+function! fsac#out_handler(channel, msg) abort
     echom a:msg
 endfunction
 
-function! fsac#sendLine(msg)
+function! s:send(msg) abort
     call ch_sendraw(s:channel, a:msg)
-    call ch_sendraw(s:channel, "\n")
+endfunction
+
+function! fsac#eval(msg) abort
+    return json_decode(ch_evalraw(s:channel, a:msg))
 endfunction
 
 function! fsac#path_join(parts) abort
-    if type(a:parts) == type('')
-        let parts = [a:parts]
-    elseif type(a:parts) == type([])
-        let parts = a:parts
-    else
-        throw 'Unsupported type for joining paths'
-    endif
-    return join([s:plugin_root_dir] + parts, s:dir_separator)
+    return join([s:plugin_root_dir] + a:parts, s:dir_separator)
 endfunction
 
 let &cpoptions = s:save_cpo
